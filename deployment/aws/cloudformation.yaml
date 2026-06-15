@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'StartupForge-AI CloudFormation Template'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name
+
+Resources:
+  # RDS Database
+  StartupForgeDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: startupforge-db
+      Engine: postgres
+      EngineVersion: '15.3'
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+      StorageType: gp2
+      MasterUsername: admin
+      MasterUserPassword: !Sub '{{resolve:secretsmanager:startupforge-db-password:SecretString:password}}'
+      BackupRetentionPeriod: 7
+      PreferredBackupWindow: '03:00-04:00'
+      PreferredMaintenanceWindow: 'sun:04:00-sun:05:00'
+      PubliclyAccessible: false
+      StorageEncrypted: true
+
+  # ECS Cluster
+  StartupForgeCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: startupforge-cluster
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+
+  # ECR Repository - Backend
+  BackendRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: startupforge-backend
+
+  # ECR Repository - Frontend
+  FrontendRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: startupforge-frontend
+
+Outputs:
+  DatabaseEndpoint:
+    Value: !GetAtt StartupForgeDB.Endpoint.Address
+    Description: Database endpoint
+
+  ClusterName:
+    Value: !Ref StartupForgeCluster
+    Description: ECS Cluster name

@@ -1,0 +1,218 @@
+# =====================================================
+# PYTHON / FASTAPI
+# =====================================================
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+*.so
+
+.Python
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# Type Checkers
+.mypy_cache/
+.pyre/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# =====================================================
+# ENVIRONMENT FILES
+# =====================================================
+
+.env
+.env.*
+!.env.example
+
+# Secrets
+secrets.json
+credentials.json
+
+# Media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# =====================================================
+# DATABASES
+# =====================================================
+
+*.sqlite
+*.sqlite3
+db.sqlite3
+
+# =====================================================
+# NODE / NEXT.JS
+# =====================================================
+
+node_modules/
+frontend/node_modules/
+
+.next/
+frontend/.next/
+
+out/
+frontend/out/
+
+.turbo/
+
+# npm
+.npm/
+.npm-cache/
+frontend/.npm-cache/
+
+# pnpm
+.pnpm-store/
+
+# yarn
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+
+# Build
+build/
+dist/
+
+# =====================================================
+# TYPESCRIPT
+# =====================================================
+
+*.tsbuildinfo
+next-env.d.ts
+
+# =====================================================
+# QDRANT / VECTOR DATABASE
+# =====================================================
+
+qdrant_storage/
+qdrant_data/
+vector_store/
+embeddings/
+
+# =====================================================
+# AI MODEL FILES
+# =====================================================
+
+models/
+checkpoints/
+*.bin
+*.pt
+*.pth
+*.onnx
+*.safetensors
+
+# =====================================================
+# GENERATED REPORTS
+# =====================================================
+
+reports/generated/
+exports/
+generated/
+
+# =====================================================
+# FILE UPLOADS
+# =====================================================
+
+uploads/
+temp/
+tmp/
+
+# =====================================================
+# CACHE
+# =====================================================
+
+.cache/
+.cache-loader/
+
+.localappdata/
+frontend/.localappdata/
+
+# =====================================================
+# IDE
+# =====================================================
+
+.vscode/
+.idea/
+
+*.swp
+*.swo
+
+# =====================================================
+# OS FILES
+# =====================================================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =====================================================
+# DOCKER
+# =====================================================
+
+docker-data/
+postgres-data/
+
+# =====================================================
+# LARGE FILES (OPTIONAL)
+# =====================================================
+
+*.zip
+*.rar
+*.7z
+
+# Ignore generated PDFs/PPTs
+*.pptx
+*.ppt
+*.pdf
+
+# Keep documentation PDFs if needed
+!docs/*.pdf
+
+# =====================================================
+# LANGGRAPH / AI EXECUTIONS
+# =====================================================
+
+workflow_runs/
+execution_logs/
+agent_logs/
+
+# =====================================================
+# NEXT DEBUG FILES
+# =====================================================
+
+.vercel/
