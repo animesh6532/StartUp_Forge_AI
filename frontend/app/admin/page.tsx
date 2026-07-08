@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../components/providers";
-import Sidebar from "../../components/Sidebar";
 import { 
   Shield, Users, Layers, Activity, Cpu, 
   Loader2, ToggleLeft, ToggleRight
@@ -77,9 +76,6 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex transition-colors duration-300">
-      {/* SIDEBAR */}
-      <Sidebar />
-
       {/* MAIN CONTAINER */}
       <main className="flex-1 max-w-6xl w-full mx-auto p-6 lg:p-10 flex flex-col gap-8">
         

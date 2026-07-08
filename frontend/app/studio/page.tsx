@@ -23,7 +23,6 @@ import {
   ArrowUpRight,
   Check
 } from "lucide-react";
-import Sidebar from "../../components/Sidebar";
 import { useAuth } from "../../components/providers";
 
 // 11 sequential agents in the LangGraph workflow
@@ -347,7 +346,6 @@ export default function AgentStudioPage() {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">
-      <Sidebar />
       <main className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-6 p-4 lg:p-7">
         
         {/* Header Section */}
@@ -374,7 +372,7 @@ export default function AgentStudioPage() {
                 ) : workflowStatus === "completed" ? (
                   <span className="text-success flex items-center gap-1">✓ Completed</span>
                 ) : workflowStatus === "failed" ? (
-                  <span className="text-red-500 flex items-center gap-1">⚠ Failed</span>
+                  <span className="text-error flex items-center gap-1">⚠ Failed</span>
                 ) : (
                   <span className="text-textSecondary">Idle</span>
                 )}
@@ -397,7 +395,7 @@ export default function AgentStudioPage() {
 
         {/* Global Error Banner */}
         {error && (
-          <div className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-500 transition-all">
+          <div className="flex items-center gap-3 rounded-lg border border-error/20 bg-error/5 p-4 text-sm text-error transition-all">
             <AlertCircle className="h-5 w-5 shrink-0" />
             <div className="font-semibold">{error}</div>
           </div>
@@ -408,7 +406,7 @@ export default function AgentStudioPage() {
           
           {/* Left Pane - Configuration & Controls */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="premium-card p-6 shadow-sm bg-gradient-to-b from-card to-card/95">
+            <div className="premium-card p-6 shadow-sm bg-card">
               <h2 className="text-sm font-bold tracking-wide flex items-center gap-2">
                 <FolderOpen className="h-4 w-4 text-accent" /> Venture Configuration
               </h2>
@@ -474,7 +472,7 @@ export default function AgentStudioPage() {
                 <button
                   onClick={runCompletePipeline}
                   disabled={executing || !form.name || !form.description}
-                  className="flex w-full items-center justify-center gap-2.5 rounded-md bg-accent py-3 text-xs font-bold text-white shadow-md transition hover:bg-accent/90 disabled:opacity-50"
+                  className="flex w-full items-center justify-center gap-2.5 rounded-md bg-accent py-3 text-xs font-bold text-white dark:text-background shadow-md transition hover:bg-accent-hover disabled:opacity-50"
                 >
                   {executing && executionMode === "pipeline" ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -546,8 +544,8 @@ export default function AgentStudioPage() {
                       borderHighlight = "border-success/40 bg-success/5";
                     }
                   } else if (status === "failed") {
-                    dotColorClass = "bg-red-500";
-                    borderHighlight = "border-red-500/30 bg-red-500/5";
+                    dotColorClass = "bg-error";
+                    borderHighlight = "border-error/30 bg-error/5";
                   }
 
                   return (
@@ -588,7 +586,7 @@ export default function AgentStudioPage() {
                           </span>
                         )}
                         {status === "failed" && (
-                          <span className="badge-status border-red-500/20 bg-red-500/5 text-[10px] text-red-500">
+                          <span className="badge-status border-error/20 bg-error/5 text-[10px] text-error">
                             ⚠ Error
                           </span>
                         )}
@@ -606,7 +604,7 @@ export default function AgentStudioPage() {
             </div>
 
             {/* Payloads Debugger Panel */}
-            <div className="premium-card p-6 shadow-sm border-t-2 border-t-accent bg-gradient-to-b from-card to-card/98">
+            <div className="premium-card p-6 shadow-sm border border-border bg-card">
               <div className="flex justify-between items-center pb-4 border-b border-border">
                 <h3 className="text-sm font-bold tracking-wide flex items-center gap-2">
                   <Terminal className="h-4 w-4 text-accent" /> Payload Workflow Debugger

@@ -26,7 +26,20 @@ export default function LoginPage() {
       await login(response.data.access_token);
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Incorrect email or password. Please try again.");
+      if (err.response) {
+        const status = err.response.status;
+        if (status === 401) {
+          setError("Incorrect email or password.");
+        } else if (status === 500) {
+          setError("Internal server error.");
+        } else if (status === 404) {
+          setError("API endpoint not found.");
+        } else {
+          setError(err.response.data?.detail || "An unexpected error occurred.");
+        }
+      } else {
+        setError("Backend server is unavailable.");
+      }
     } finally {
       setLoading(false);
     }
@@ -36,7 +49,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col justify-between bg-background px-6 text-foreground transition-colors duration-300">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between py-5">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-sm font-bold text-white shadow-md shadow-accent/10">S</div>
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-card-secondary border border-border text-sm font-bold text-foreground shadow-sm">S</div>
           <span className="text-sm font-bold tracking-tight">StartupForge</span>
         </Link>
         <ThemeToggle compact />
@@ -50,7 +63,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="mb-6 flex items-center gap-2.5 rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-xs text-red-500 font-semibold">
+            <div className="mb-6 flex items-center gap-2.5 rounded-xl border border-error/20 bg-error/5 px-4 py-3 text-xs text-error font-semibold">
               <AlertCircle className="h-4 w-4 shrink-0" strokeWidth={2} />
               <p>{error}</p>
             </div>
@@ -90,7 +103,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-xs font-bold text-white dark:text-[#0b1832] hover:bg-accent-hover disabled:opacity-50 transition shadow-md shadow-accent/5"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-xs font-bold text-white dark:text-background hover:bg-accent-hover disabled:opacity-50 transition shadow-md shadow-accent/5"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? "Verifying credentials..." : "Log in"}

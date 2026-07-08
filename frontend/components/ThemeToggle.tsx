@@ -20,7 +20,7 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
           type="button"
           onClick={() => handleSetTheme("light")}
           className={`relative z-10 p-1.5 rounded-full transition-colors duration-200 ${
-            theme === "light" ? "text-accent" : "text-text-muted hover:text-text-primary"
+            theme === "light" ? "text-accent" : "text-textMuted hover:text-foreground"
           }`}
           aria-label="Switch to light mode"
         >
@@ -37,7 +37,7 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
           type="button"
           onClick={() => handleSetTheme("dark")}
           className={`relative z-10 p-1.5 rounded-full transition-colors duration-200 ${
-            theme === "dark" ? "text-accent" : "text-text-muted hover:text-text-primary"
+            theme === "dark" ? "text-accent" : "text-textMuted hover:text-foreground"
           }`}
           aria-label="Switch to dark mode"
         >
@@ -60,7 +60,7 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
         type="button"
         onClick={() => handleSetTheme("light")}
         className={`relative z-10 flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-300 ${
-          theme === "light" ? "text-accent" : "text-text-muted hover:text-text-primary"
+          theme === "light" ? "text-accent" : "text-textMuted hover:text-foreground"
         }`}
       >
         <Sun className="h-3.5 w-3.5" />
@@ -77,7 +77,7 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
         type="button"
         onClick={() => handleSetTheme("dark")}
         className={`relative z-10 flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors duration-300 ${
-          theme === "dark" ? "text-accent" : "text-text-muted hover:text-text-primary"
+          theme === "dark" ? "text-accent" : "text-textMuted hover:text-foreground"
         }`}
       >
         <Moon className="h-3.5 w-3.5" />

@@ -266,13 +266,13 @@ export default function FloatingChatbot() {
   if (!user || !token) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 font-sans">
+    <div className="fixed bottom-[92px] lg:bottom-6 right-6 z-50 font-sans">
       {/* Floating Trigger Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           type="button"
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white dark:text-[#0b1832] shadow-lg shadow-accent/20 hover:scale-105 active:scale-95 transition-all duration-300 border border-accent/25"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white dark:text-background shadow-lg shadow-accent/10 border border-accent/20 transition-all duration-300"
           aria-label="Open AI Co-founder Chat"
         >
           <MessageSquare className="h-6 w-6" strokeWidth={2.25} />
@@ -286,7 +286,7 @@ export default function FloatingChatbot() {
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border bg-card-secondary/60 px-4 py-3.5">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-white dark:text-[#0b1832] font-bold text-xs shadow-sm">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-white dark:text-background font-bold text-xs shadow-sm">
                 <Sparkles className="h-4 w-4" />
               </div>
               <div>
@@ -324,7 +324,7 @@ export default function FloatingChatbot() {
                 title={isMuted ? "Unmute Voice" : "Mute Voice"}
                 className={`rounded-lg p-1.5 transition ${
                   isMuted 
-                    ? "bg-red-500/10 text-red-500 border border-red-500/15" 
+                    ? "bg-error/10 text-error border border-error/15" 
                     : "text-textSecondary hover:bg-card-secondary hover:text-foreground"
                 }`}
               >
@@ -393,7 +393,7 @@ export default function FloatingChatbot() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-3 text-xs leading-relaxed transition ${
                     msg.sender === "user"
-                      ? "bg-accent text-white dark:text-[#0b1832] font-semibold rounded-br-sm"
+                      ? "bg-accent text-white dark:text-background font-semibold rounded-br-sm"
                       : "bg-card-secondary/80 border border-border/80 text-foreground font-medium rounded-bl-sm"
                   }`}
                 >
@@ -427,7 +427,7 @@ export default function FloatingChatbot() {
             <button
               type="submit"
               disabled={isLoading || !inputValue.trim()}
-              className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-white dark:text-[#0b1832] shadow-sm hover:opacity-90 disabled:opacity-50 transition"
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-white dark:text-background shadow-sm hover:opacity-90 disabled:opacity-50 transition"
               aria-label="Send message"
             >
               <Send className="h-4 w-4" />

@@ -1,51 +1,65 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Light Theme (Premium Venture Capital Palette) */
-  --background: #FAF7FB;
-  --card: #FFFFFF;
-  --card-secondary: #F3EEF7;
-  --text-primary: #0B1832;
-  --text-secondary: #26415E;
-  --text-muted: #64748B;
-  --accent: #26415E;
-  --accent-hover: #0D1E4C;
-  --border: rgba(38,65,94,0.12);
-  --success: #16A34A;
-  --warning: #D97706;
-  --error: #DC2626;
+  /* Premium Light Theme — Layered gradients and glassmorphism */
+  --text-primary: #031716;
+  --text-secondary: #274D60;
+  --text-muted: #6BA3BE;
+  --accent: #2F6BFF;
+  
+  /* Gradients */
+  --accent-gradient: linear-gradient(135deg, #2F6BFF 0%, #0C969C 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #2F6BFF 0%, #6BA3BE 100%);
+  --card: linear-gradient(180deg, rgba(255,255,255,.92), rgba(230,249,250,.92));
+  --card-secondary: rgba(235, 250, 252, 0.45);
+  --card-hover: rgba(235, 250, 252, 0.7);
+  
+  /* Borders and Dividers */
+  --border: rgba(255, 255, 255, 0.45);
+  --border-strong: rgba(10, 112, 117, 0.15);
+  
+  /* Status Colors */
+  --success: #0A7075;
+  --warning: #274D60;
+  --error: #D96B52; /* Muted Coral */
 
-  /* Premium Glassmorphism Variables */
-  --card-glass-bg: rgba(255, 255, 255, 0.7);
-  --card-glass-border: rgba(38, 65, 94, 0.12);
-  --accent-focus: rgba(38, 65, 94, 0.08);
-  --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.05);
+  /* Floating Dock & Tooltips */
+  --dock-glass-bg: rgba(255, 255, 255, 0.55);
+  --dock-glass-border: rgba(255, 255, 255, 0.45);
+  --dock-blur: 30px;
 }
 
 .dark {
-  /* Dark Theme (Venture Operating System Palette) */
-  --background: #0B1832;
-  --card: #12213F;
-  --card-secondary: #1A2B4A;
-  --text-primary: #F8FAFC;
-  --text-secondary: #CBD5E1;
-  --text-muted: #94A3B8;
-  --accent: #B3C6E5;
-  --accent-hover: #C4B8D3;
-  --border: rgba(196,184,211,0.15);
-  --success: #22C55E;
-  --warning: #F59E0B;
-  --error: #EF4444;
+  /* Premium Dark Theme — Layered deep teal and dark surfaces */
+  --text-primary: #F8FBFC;
+  --text-secondary: #6BA3BE;
+  --text-muted: #274D60;
+  --accent: #2F6BFF;
 
-  /* Premium Glassmorphism Variables */
-  --card-glass-bg: rgba(255, 255, 255, 0.04);
-  --card-glass-border: rgba(255, 255, 255, 0.08);
-  --accent-focus: rgba(179, 198, 229, 0.15);
-  --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.25);
+  /* Gradients */
+  --accent-gradient: linear-gradient(135deg, #2F6BFF 0%, #0C969C 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #2F6BFF 0%, #6BA3BE 100%);
+  --card: linear-gradient(180deg, rgba(3, 47, 48, 0.92), rgba(3, 23, 22, 0.92));
+  --card-secondary: rgba(3, 47, 48, 0.4);
+  --card-hover: rgba(3, 47, 48, 0.65);
+
+  /* Borders and Dividers */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(12, 150, 156, 0.25);
+
+  /* Status Colors */
+  --success: #0C969C;
+  --warning: #274D60;
+  --error: #E06D53; /* Muted Coral */
+
+  /* Floating Dock & Tooltips */
+  --dock-glass-bg: rgba(3, 23, 22, 0.55);
+  --dock-glass-border: rgba(255, 255, 255, 0.12);
+  --dock-blur: 30px;
 }
 
 html {
@@ -56,160 +70,429 @@ html {
   box-sizing: border-box;
 }
 
+html, body, #__next {
+  min-height: 100vh;
+  width: 100%;
+}
+
 body {
-  background-color: var(--background);
+  background: 
+    radial-gradient(circle at top left, rgba(10,112,117,.18) 0%, transparent 35%),
+    radial-gradient(circle at top right, rgba(12,150,156,.18) 0%, transparent 35%),
+    radial-gradient(circle at bottom left, rgba(107,163,190,.16) 0%, transparent 45%),
+    linear-gradient(180deg, #EAF8F8 0%, #D9F2F2 20%, #C8ECEC 40%, #B7E3E5 60%, #D7EEF1 80%, #F7FBFC 100%) !important;
+  background-attachment: fixed !important;
+  background-size: cover !important;
   color: var(--text-primary);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
-  transition: background-color 0.30s ease, border-color 0.30s ease, color 0.30s ease;
+  transition: border-color 0.2s ease, color 0.2s ease;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Typography Utility Hierarchy */
+.dark body {
+  background: 
+    radial-gradient(circle at top left, rgba(10,112,117,.10) 0%, transparent 35%),
+    radial-gradient(circle at top right, rgba(12,150,156,.10) 0%, transparent 35%),
+    radial-gradient(circle at bottom left, rgba(107,163,190,.08) 0%, transparent 45%),
+    linear-gradient(180deg, #031716 0%, #032F30 50%, #031716 100%) !important;
+}
+
+/* ==========================================================================
+   Radial Blurred Glow Container (Depth Lights)
+   ========================================================================== */
+
+.radial-glow-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -9999;
+  overflow: hidden;
+}
+
+.radial-glow-1 {
+  position: absolute;
+  top: -150px;
+  left: -150px;
+  width: 700px;
+  height: 700px;
+  background: rgba(10, 112, 117, 0.18); /* Teal */
+  filter: blur(350px);
+  border-radius: 50%;
+}
+
+.radial-glow-2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background: rgba(12, 150, 156, 0.15); /* Cyan */
+  filter: blur(350px);
+  border-radius: 50%;
+}
+
+.radial-glow-3 {
+  position: absolute;
+  bottom: -150px;
+  right: -150px;
+  width: 700px;
+  height: 700px;
+  background: rgba(107, 163, 190, 0.16); /* Light Blue */
+  filter: blur(350px);
+  border-radius: 50%;
+}
+
+/* ==========================================================================
+   Typography scale
+   ========================================================================== */
+
+.text-display {
+  font-size: 3.5rem !important;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 700;
+}
+
 .text-hero {
-  font-size: 60px !important;
+  font-size: 2.75rem !important;
   line-height: 1.1;
   letter-spacing: -0.03em;
   font-weight: 700;
 }
 
 .text-section {
-  font-size: 36px !important;
-  line-height: 1.2;
+  font-size: 1.75rem !important;
+  line-height: 1.25;
   letter-spacing: -0.02em;
   font-weight: 600;
 }
 
-.text-card-title {
-  font-size: 18px !important;
+.text-title {
+  font-size: 1.125rem !important;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
   font-weight: 600;
 }
 
-.text-body {
-  font-size: 16px !important;
-  line-height: 1.6;
+.text-card-title {
+  font-size: 1rem !important;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  font-weight: 600;
 }
 
-/* Utility aliases required by components */
-.bg-background { background-color: var(--background) !important; }
-.bg-card { background-color: var(--card) !important; }
-.bg-card-secondary { background-color: var(--card-secondary) !important; }
+.text-subtitle {
+  font-size: 0.9375rem !important;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.text-body {
+  font-size: 0.9375rem !important;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.text-caption,
+.metric-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: var(--text-muted);
+}
+
+.text-numbers {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   Utility aliases required by existing components
+   ========================================================================== */
+
+.bg-background { background: transparent !important; }
+.bg-card { background: var(--card) !important; }
+.bg-card-secondary { background: var(--card-secondary) !important; }
 .text-foreground { color: var(--text-primary) !important; }
 .text-textSecondary { color: var(--text-secondary) !important; }
 .text-muted { color: var(--text-muted) !important; }
 .text-accent { color: var(--accent) !important; }
 .border-border { border-color: var(--border) !important; }
-.hover\:accent-hover:hover { color: var(--accent-hover) !important; }
-.bg-accent { background-color: var(--accent) !important; }
-.bg-accent-hover:hover { background-color: var(--accent-hover) !important; }
+.bg-accent { background: var(--accent) !important; }
+.bg-accent-hover:hover { background: var(--accent) !important; }
 
-/* Premium Scrollbars */
+/* ==========================================================================
+   Scrollbars
+   ========================================================================== */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--border-strong);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+  background: var(--text-muted);
 }
 
-/* Premium Inputs & Form Fields (Linear/Vercel feel) */
+/* ==========================================================================
+   Form fields & inputs
+   ========================================================================== */
+
 input, textarea, select {
-  background-color: var(--card-secondary) !important;
+  background-color: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border) !important;
   color: var(--text-primary) !important;
   outline: none;
   font-size: 0.875rem;
   border-radius: 12px !important;
-  padding: 0.75rem 1rem !important; /* Larger inputs */
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  padding: 0.625rem 0.875rem !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(3, 23, 22, 0.02) !important;
+}
+
+.dark input, .dark textarea, .dark select {
+  background-color: rgba(3, 47, 48, 0.45) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+input:hover, textarea:hover, select:hover {
+  border-color: var(--border-strong) !important;
+  background-color: rgba(255, 255, 255, 0.65) !important;
+}
+
+.dark input:hover, .dark textarea:hover, .dark select:hover {
+  background-color: rgba(3, 47, 48, 0.65) !important;
 }
 
 input:focus, textarea:focus, select:focus {
-  border-color: var(--accent) !important;
-  box-shadow: 0 0 0 3px var(--accent-focus) !important;
+  border-color: transparent !important;
   background-color: var(--card) !important;
+  box-shadow: 0 0 0 2px #2F6BFF, 0 0 0 4px #0C969C !important;
 }
 
-/* Premium Primary Buttons */
+input:disabled, textarea:disabled, select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   Glass Search Bar
+   ========================================================================== */
+
+.glass-search {
+  background: rgba(255, 255, 255, 0.45) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 4px 20px rgba(3, 23, 22, 0.04) !important;
+  border-radius: 9999px !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.dark .glass-search {
+  background: rgba(3, 47, 48, 0.45) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.glass-search:focus {
+  background: var(--card) !important;
+  box-shadow: 0 0 0 2px #2F6BFF, 0 0 0 4px #0C969C !important;
+}
+
+/* ==========================================================================
+   Buttons — Primary / Secondary / Ghost
+   ========================================================================== */
+
 .btn-primary {
-  background-color: var(--accent) !important;
-  color: #FFFFFF !important;
+  background: var(--accent-gradient) !important;
+  color: #F8FBFC !important;
+  border: none !important;
   border-radius: 12px !important;
-  padding: 0.75rem 1.5rem !important;
+  padding: 0.625rem 1.25rem !important;
   font-weight: 600 !important;
-  transition: background-color 300ms ease, transform 300ms ease, box-shadow 300ms ease !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+  font-size: 0.8125rem;
+  transition: transform 150ms ease, box-shadow 150ms ease, opacity 150ms ease !important;
+  box-shadow: 0 4px 15px rgba(47, 107, 255, 0.2) !important;
 }
 
 .btn-primary:hover {
-  background-color: var(--accent-hover) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+  background: var(--accent-gradient-hover) !important;
+  box-shadow: 0 6px 20px rgba(47, 107, 255, 0.3) !important;
 }
 
-.dark .btn-primary {
-  color: #0B1832 !important; /* Premium contrast in dark mode */
+.btn-primary:active {
+  transform: translateY(1px) !important;
 }
 
-/* Premium Card Styles */
-.premium-card {
-  background: var(--card-glass-bg) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid var(--card-glass-border) !important;
-  box-shadow: var(--shadow-premium) !important;
+.btn-primary:disabled {
+  opacity: 0.55 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn-secondary {
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-strong) !important;
   border-radius: 12px !important;
-  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), border-color 300ms ease, box-shadow 300ms ease !important;
+  padding: 0.625rem 1.25rem !important;
+  font-weight: 600 !important;
+  font-size: 0.8125rem;
+  transition: all 150ms ease !important;
+}
+
+.btn-secondary:hover {
+  background: var(--card-hover) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--text-secondary) !important;
+}
+
+.btn-ghost {
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  border-radius: 12px !important;
+  padding: 0.625rem 1.25rem !important;
+  font-weight: 600 !important;
+  font-size: 0.8125rem;
+  transition: all 150ms ease !important;
+}
+
+.btn-ghost:hover {
+  background: var(--card-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ==========================================================================
+   Cards — Glassmorphism premium
+   ========================================================================== */
+
+.premium-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(230,249,250,.92)) !important;
+  border: 1px solid rgba(255,255,255,.45) !important;
+  box-shadow: 0 25px 80px rgba(3,23,22,.08) !important;
+  border-radius: 20px !important;
+  padding: 24px !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease !important;
+  backdrop-filter: blur(10px);
 }
 
 .premium-card:hover {
   transform: translateY(-2px) !important;
-  border-color: var(--accent) !important;
+  box-shadow: 0 30px 90px rgba(3,23,22,.12) !important;
 }
 
-/* Badge styling */
+.dark .premium-card {
+  background: linear-gradient(180deg, rgba(3, 47, 48, 0.92), rgba(3, 23, 22, 0.92)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45) !important;
+}
+
+.dark .premium-card:hover {
+  box-shadow: 0 30px 95px rgba(0, 0, 0, 0.60) !important;
+}
+
+/* ==========================================================================
+   Metric Cards
+   ========================================================================== */
+
+.metric-card {
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(230,249,250,.92)) !important;
+  border: 1px solid rgba(255,255,255,.45) !important;
+  box-shadow: 0 25px 80px rgba(3,23,22,.08) !important;
+  border-radius: 20px !important;
+  padding: 24px !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease !important;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(220,245,247,.95)) !important;
+  box-shadow: 0 30px 90px rgba(3,23,22,.12) !important;
+}
+
+.dark .metric-card {
+  background: linear-gradient(180deg, #032F30, #031716) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.45) !important;
+}
+
+.dark .metric-card:hover {
+  background: linear-gradient(180deg, #033b3d, #031716) !important;
+  box-shadow: 0 30px 95px rgba(0, 0, 0, 0.60) !important;
+}
+
+/* ==========================================================================
+   Badges
+   ========================================================================== */
+
 .badge-status {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.25rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
   border-radius: 9999px;
   border: 1px solid var(--border);
   background-color: var(--card-secondary);
   color: var(--text-secondary);
+  letter-spacing: 0.02em;
 }
 
-/* Utility details */
-.metric-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
+/* ==========================================================================
+   Skeleton / loading state
+   ========================================================================== */
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--card-secondary);
+  border-radius: 8px;
 }
 
-.text-textSecondary {
-  color: var(--text-secondary);
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
 }
 
-/* Hide interactive outlines on standard links */
-a:focus-visible, button:focus-visible {
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ==========================================================================
+   Misc
+   ========================================================================== */
+
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+  border-radius: 4px;
 }
 
-/* Section Container & Grid layouts */
 .section-shell {
   width: 100%;
   max-width: 80rem;
@@ -234,14 +517,14 @@ a:focus-visible, button:focus-visible {
 .workspace-shell {
   display: flex;
   min-height: 100vh;
-  background-color: var(--background);
+  background: transparent !important;
   color: var(--text-primary);
 }
 
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 @media (min-width: 768px) {
   .dashboard-grid {

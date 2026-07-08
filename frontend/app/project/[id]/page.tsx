@@ -30,7 +30,6 @@ import {
   Send,
   Shield
 } from "lucide-react";
-import Sidebar from "../../../components/Sidebar";
 import { useAuth, useCurrency } from "../../../components/providers";
 
 const tabs = [
@@ -63,7 +62,7 @@ function scoreValue(value: any, fallback = 74) {
 function statusClass(status?: string) {
   if (status === "completed") return "bg-success/10 text-success border border-success/15";
   if (status === "processing") return "bg-accent/10 text-accent border border-accent/15 animate-pulse";
-  if (status === "failed") return "bg-red-500/10 text-red-500 border border-red-500/15";
+  if (status === "failed") return "bg-error/10 text-error border border-error/15";
   return "bg-card-secondary text-textSecondary border border-border";
 }
 
@@ -82,6 +81,29 @@ export default function ProjectWorkspacePage() {
   useEffect(() => {
     if (!loading && !token) router.push("/login");
   }, [loading, token, router]);
+
+  // Sync tab state with events from the floating dock
+  useEffect(() => {
+    const handleSetTab = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) {
+        setActiveTab(customEvent.detail);
+      }
+    };
+    window.addEventListener("setActiveTab", handleSetTab);
+    return () => window.removeEventListener("setActiveTab", handleSetTab);
+  }, []);
+
+  // Sync tab state with URL query search parameters on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get("tab");
+      if (tabParam) {
+        setActiveTab(tabParam);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const loadWorkspace = async () => {
@@ -224,11 +246,11 @@ export default function ProjectWorkspacePage() {
   }, [activeTab, cfAnalysis, startup]);
 
   const workspaceScores = [
-    ["Startup Score", scoreValue(firstDefined(reviewer.startup_score, activeReport.startup_score), 82), ShieldCheck],
-    ["Validation Score", scoreValue(validator.viability_score, 72), CheckCircle2],
-    ["Market Potential", scoreValue(firstDefined(market.market_potential_score, market.opportunity_score), 81), TrendingUp],
-    ["Competition Score", scoreValue(firstDefined(competitor.competition_score, competitor.differentiation_score), 66), BarChart3],
-    ["Investor Readiness", scoreValue(firstDefined(investor.investor_readiness_score, activeReport.investor_readiness_score), 85), Sparkles],
+    ["Startup Score", scoreValue(firstDefined(reviewer.startup_score, activeReport.startup_score), 82), ShieldCheck, "bg-accent", "text-accent"],
+    ["Validation Score", scoreValue(validator.viability_score, 72), CheckCircle2, "bg-success", "text-success"],
+    ["Market Potential", scoreValue(firstDefined(market.market_potential_score, market.opportunity_score), 81), TrendingUp, "bg-accent", "text-accent"],
+    ["Competition Score", scoreValue(firstDefined(competitor.competition_score, competitor.differentiation_score), 66), BarChart3, "bg-textSecondary", "text-textSecondary"],
+    ["Investor Readiness", scoreValue(firstDefined(investor.investor_readiness_score, activeReport.investor_readiness_score), 85), Sparkles, "bg-success", "text-success"],
   ];
 
   const triggerExport = async (format: string) => {
@@ -273,7 +295,6 @@ export default function ProjectWorkspacePage() {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="border-b border-border bg-card px-5 py-5 lg:px-10 transition-colors">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -305,10 +326,10 @@ export default function ProjectWorkspacePage() {
 
           {/* Scores Progress Grid */}
           <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 border-t border-border pt-5">
-            {workspaceScores.map(([label, value, Icon]: any) => (
+            {workspaceScores.map(([label, value, Icon, bgClass, textClass]: any) => (
               <div key={label} className="flex items-center gap-3 rounded-xl bg-card-secondary/40 border border-border px-3.5 py-3 text-xs transition">
                 <div className="p-1.5 rounded-lg bg-card border border-border">
-                  <Icon className="h-4 w-4 text-accent shrink-0" strokeWidth={1.75} />
+                  <Icon className={`h-4 w-4 shrink-0 ${textClass}`} strokeWidth={1.5} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
@@ -316,7 +337,7 @@ export default function ProjectWorkspacePage() {
                     <span className="font-bold text-foreground">{value}%</span>
                   </div>
                   <div className="mt-1.5 h-1 w-full rounded-full bg-border overflow-hidden">
-                    <div className="h-full bg-accent rounded-full" style={{ width: `${Math.min(value, 100)}%` }} />
+                    <div className={`h-full rounded-full ${bgClass}`} style={{ width: `${Math.min(value, 100)}%` }} />
                   </div>
                 </div>
               </div>
@@ -354,7 +375,10 @@ export default function ProjectWorkspacePage() {
                     <button
                       key={key}
                       type="button"
-                      onClick={() => setActiveTab(key)}
+                      onClick={() => {
+                        setActiveTab(key);
+                        router.push(`/project/${startupId}?tab=${key}`);
+                      }}
                       className={`rounded-xl border px-3.5 py-2.5 text-left text-xs font-semibold tracking-wide transition ${
                         activeTab === key 
                           ? "border-accent/10 bg-accent/5 text-accent font-bold shadow-sm" 
@@ -383,13 +407,13 @@ export default function ProjectWorkspacePage() {
             {activeTab === "overview" && (
               <div className="space-y-8">
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                  {workspaceScores.map(([label, value, Icon]: any) => (
+                  {workspaceScores.map(([label, value, Icon, bgClass, textClass]: any) => (
                     <div key={label} className="premium-card p-5">
-                      <Icon className="h-4.5 w-4.5 text-accent" strokeWidth={1.5} />
+                      <Icon className={`h-4.5 w-4.5 ${textClass}`} strokeWidth={1.5} />
                       <div className="mt-4 text-2xl font-bold tracking-tight text-foreground">{value}%</div>
                       <div className="mt-1.5 text-[9px] font-bold uppercase tracking-widest text-textSecondary">{label}</div>
                       <div className="mt-4 h-1.5 rounded-full bg-card-secondary overflow-hidden">
-                        <div className="h-full rounded-full bg-accent" style={{ width: `${Math.min(value, 100)}%` }} />
+                        <div className={`h-full rounded-full ${bgClass}`} style={{ width: `${Math.min(value, 100)}%` }} />
                       </div>
                     </div>
                   ))}
@@ -730,7 +754,7 @@ export default function ProjectWorkspacePage() {
                   <div className="space-y-2">
                     {asArray(technical.mvp_roadmap).map((phase: string, idx: number) => (
                       <div key={idx} className="flex gap-3.5 items-start rounded-xl border border-border bg-card-secondary/20 p-3.5 text-xs text-textSecondary font-medium">
-                        <div className="w-5 h-5 rounded-lg bg-accent text-white dark:text-[#0b1832] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">{idx + 1}</div>
+                        <div className="w-5 h-5 rounded-lg bg-accent text-white dark:text-background flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">{idx + 1}</div>
                         <p className="leading-relaxed">{phase}</p>
                       </div>
                     ))}
@@ -756,7 +780,7 @@ export default function ProjectWorkspacePage() {
                         </div>
                         <div>
                           <div className="text-[9px] uppercase font-bold text-textSecondary mt-2">CTA Button</div>
-                          <div className="inline-block mt-2 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white dark:text-[#0b1832] uppercase">{website.hero_section.cta_button_text || "Get Started"}</div>
+                          <div className="inline-block mt-2 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white dark:text-background uppercase">{website.hero_section.cta_button_text || "Get Started"}</div>
                         </div>
                       </div>
                     ) : (
@@ -797,7 +821,7 @@ export default function ProjectWorkspacePage() {
                     {asArray(website.page_sections).map((section: any, idx: number) => (
                       <div key={idx} className="rounded-xl border border-border bg-card-secondary/20 p-4 text-xs font-medium">
                         <div className="flex items-center gap-2.5 mb-2.5 border-b border-border/40 pb-2">
-                          <span className="w-5 h-5 rounded-lg bg-accent text-white dark:text-[#0b1832] flex items-center justify-center font-bold text-[10px]">{section.placement_order || idx + 1}</span>
+                          <span className="w-5 h-5 rounded-lg bg-accent text-white dark:text-background flex items-center justify-center font-bold text-[10px]">{section.placement_order || idx + 1}</span>
                           <h4 className="font-bold text-foreground">{section.title}</h4>
                         </div>
                         <p className="text-textSecondary leading-relaxed pl-7">{section.content_body}</p>
@@ -834,7 +858,7 @@ export default function ProjectWorkspacePage() {
                                     key={fmt}
                                     type="button"
                                     onClick={() => triggerExport(fmt)}
-                                    className="bg-accent/10 border border-accent/15 text-accent font-bold uppercase text-[9px] px-2 py-1 rounded-lg hover:bg-accent hover:text-white dark:hover:text-[#0b1832] transition"
+                                    className="bg-accent/10 border border-accent/15 text-accent font-bold uppercase text-[9px] px-2 py-1 rounded-lg hover:bg-accent hover:text-white dark:hover:text-background transition"
                                   >
                                     {fmt}
                                   </button>
@@ -911,7 +935,7 @@ export default function ProjectWorkspacePage() {
                       type="button"
                       disabled={loadingCf}
                       onClick={runCofounderAudit}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-accent py-3 text-xs font-bold text-white dark:text-[#0b1832] hover:bg-accent-hover transition disabled:opacity-50"
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-accent py-3 text-xs font-bold text-white dark:text-background hover:bg-accent-hover transition disabled:opacity-50"
                     >
                       {loadingCf && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                       {loadingCf ? "Compiling Analysis..." : "Execute Venture Audit"}
@@ -939,7 +963,7 @@ export default function ProjectWorkspacePage() {
                       ) : (
                         cofounderChat.map((msg, idx) => (
                           <div key={idx} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
-                            <div className={`max-w-md rounded-xl p-3.5 text-xs leading-relaxed whitespace-pre-line font-medium ${msg.sender === "user" ? "bg-accent text-white dark:text-[#0b1832]" : "bg-card border border-border text-foreground shadow-sm"}`}>
+                            <div className={`max-w-md rounded-xl p-3.5 text-xs leading-relaxed whitespace-pre-line font-medium ${msg.sender === "user" ? "bg-accent text-white dark:text-background" : "bg-card border border-border text-foreground shadow-sm"}`}>
                               {msg.text}
                             </div>
                           </div>
@@ -964,7 +988,7 @@ export default function ProjectWorkspacePage() {
                       />
                       <button
                         type="submit"
-                        className="bg-accent text-white dark:text-[#0b1832] rounded-xl p-3 hover:opacity-90 disabled:opacity-40 transition"
+                        className="bg-card-secondary border border-border text-textSecondary hover:text-foreground hover:bg-card-hover rounded-xl p-3 disabled:opacity-40 transition"
                         disabled={loadingCf || !cfQuestion.trim() || cofounderChat.length === 0}
                         aria-label="Send message"
                       >

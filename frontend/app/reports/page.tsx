@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Download, FileArchive, FileText, Loader2, Presentation, Search, Sheet } from "lucide-react";
-import Sidebar from "../../components/Sidebar";
 import { useAuth } from "../../components/providers";
 
 function statusClass(status?: string) {
@@ -103,7 +102,6 @@ export default function ReportsPage() {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Sidebar />
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 p-6 lg:p-10">
         <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 md:flex-row md:items-end">
           <div>

@@ -2,16 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../components/providers";
-import Sidebar from "../../components/Sidebar";
+import { useAuth, useCurrency } from "../../components/providers";
+import ThemeToggle from "../../components/ThemeToggle";
 import { 
   User as UserIcon, Mail, Shield, Zap, 
-  CreditCard, Loader2
+  CreditCard, Loader2, LogOut, Settings
 } from "lucide-react";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, token, loading } = useAuth();
+  const { user, token, loading, logout } = useAuth();
+  const { currency, setCurrency } = useCurrency();
   const [sub, setSub] = useState<any | null>(null);
   const [loadingSub, setLoadingSub] = useState(true);
   const [updatingSub, setUpdatingSub] = useState(false);
@@ -73,9 +74,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex transition-colors duration-300">
-      {/* SIDEBAR */}
-      <Sidebar />
-
       {/* MAIN CONTAINER */}
       <main className="flex-1 max-w-4xl w-full mx-auto p-6 lg:p-10 flex flex-col gap-8 animate-fade-in">
         
@@ -158,6 +156,62 @@ export default function ProfilePage() {
               </div>
             )}
           </div>
+
+          {/* SYSTEM PREFERENCES PANEL */}
+          <div className="premium-card p-6 bg-card space-y-6 md:col-span-2">
+            <h3 className="text-xs font-bold text-foreground border-b border-border pb-3 flex items-center gap-2 uppercase tracking-wider">
+              <Settings className="w-4 h-4 text-accent" strokeWidth={1.5} /> System Preferences
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Currency Selector */}
+              <div className="bg-card-secondary/20 border border-border p-4 rounded-xl flex flex-col justify-between gap-3">
+                <div>
+                  <h4 className="text-xs font-bold text-foreground">Localization Currency</h4>
+                  <p className="text-[10px] text-text-muted mt-1 leading-normal">Select active currency for capital budget, calculations, and estimates.</p>
+                </div>
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value as any)}
+                  className="w-full mt-2"
+                  aria-label="Select currency"
+                >
+                  <option value="USD">🇺🇸 USD ($)</option>
+                  <option value="INR">🇮🇳 INR (₹)</option>
+                  <option value="EUR">🇪🇺 EUR (€)</option>
+                  <option value="GBP">🇬🇧 GBP (£)</option>
+                  <option value="AED">🇦🇪 AED (د.إ)</option>
+                  <option value="SGD">🇸🇬 SGD (S$)</option>
+                </select>
+              </div>
+
+              {/* Theme Selector */}
+              <div className="bg-card-secondary/20 border border-border p-4 rounded-xl flex flex-col justify-between gap-3">
+                <div>
+                  <h4 className="text-xs font-bold text-foreground">Appearance Theme</h4>
+                  <p className="text-[10px] text-text-muted mt-1 leading-normal">Toggle light or dark styling color layouts on this workspace session.</p>
+                </div>
+                <div className="mt-2 w-fit">
+                  <ThemeToggle compact />
+                </div>
+              </div>
+
+              {/* Logout Action */}
+              <div className="bg-card-secondary/20 border border-border p-4 rounded-xl flex flex-col justify-between gap-3">
+                <div>
+                  <h4 className="text-xs font-bold text-foreground">Session Administration</h4>
+                  <p className="text-[10px] text-text-muted mt-1 leading-normal">Log out from your active session. You will need credentials to sign back in.</p>
+                </div>
+                <button
+                  onClick={logout}
+                  type="button"
+                  className="w-full mt-2 flex items-center justify-center gap-2 py-3 border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 text-red-500 text-xs font-bold rounded-xl transition"
+                >
+                  <LogOut className="w-4 h-4" strokeWidth={2} />
+                  <span>Log Out Session</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* PLANS CARD SELECTOR */}
@@ -182,7 +236,7 @@ export default function ProfilePage() {
 
             {/* Premium */}
             <div className="premium-card p-5 bg-card border-accent flex flex-col justify-between gap-6 relative">
-              <div className="absolute -top-2.5 right-4 px-2.5 py-0.5 bg-accent text-white dark:text-[#0b1832] rounded-full text-[8px] font-bold uppercase tracking-wider border border-accent/10 shadow-sm">Popular</div>
+              <div className="absolute -top-2.5 right-4 px-2.5 py-0.5 bg-accent text-white dark:text-background rounded-full text-[8px] font-bold uppercase tracking-wider border border-accent/10 shadow-sm">Popular</div>
               <div>
                 <h4 className="text-[10px] font-bold text-accent uppercase tracking-wider mb-1">Premium Studio</h4>
                 <div className="text-xl font-extrabold text-foreground mb-2">$29</div>
@@ -191,7 +245,7 @@ export default function ProfilePage() {
               <button 
                 disabled={sub?.plan_name === "premium" || updatingSub}
                 onClick={() => upgradePlan("premium")}
-                className="w-full py-3 bg-accent hover:bg-accent-hover text-white dark:text-[#0b1832] text-xs font-bold rounded-xl disabled:opacity-40 transition shadow-md shadow-accent/5"
+                className="w-full py-3 bg-accent hover:bg-accent-hover text-white dark:text-background text-xs font-bold rounded-xl disabled:opacity-40 transition shadow-md shadow-accent/5"
               >
                 {updatingSub ? "Processing..." : sub?.plan_name === "premium" ? "Active" : "Upgrade"}
               </button>

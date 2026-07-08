@@ -205,7 +205,7 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
           </motion.div>
-          <div className="absolute inset-0 z-10 pointer-events-none bg-[linear-gradient(180deg,transparent,rgba(11,24,50,0.08))]" />
+          <div className="absolute inset-0 z-10 pointer-events-none bg-[linear-gradient(180deg,transparent,rgba(3,23,22,0.08))]" />
           
           <div className="relative z-20 section-shell grid min-h-[calc(100vh-8rem)] items-center gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr]">
             <motion.div {...sectionReveal} className="max-w-2xl text-left">
@@ -313,7 +313,7 @@ export default function LandingPage() {
                           <span>92%</span>
                         </div>
                         <div className="h-1 w-full bg-border rounded-full overflow-hidden">
-                          <div className="h-full bg-accent rounded-full" style={{ width: "92%" }} />
+                          <div className="h-full bg-success rounded-full" style={{ width: "92%" }} />
                         </div>
                       </div>
                     </div>
@@ -530,7 +530,7 @@ export default function LandingPage() {
                     <div className="mt-3 text-3xl font-bold tracking-tight text-foreground">{price}</div>
                     <p className="mt-3.5 text-xs leading-relaxed text-textSecondary font-semibold">{body}</p>
                   </div>
-                  <Link href="/register" className={`mt-8 inline-flex w-full items-center justify-center rounded-xl py-3 text-xs font-semibold transition ${index === 1 ? "bg-accent text-white dark:text-[#0B1832] hover:bg-accent-hover" : "border border-border bg-card hover:bg-card-secondary"}`}>
+                  <Link href="/register" className={`mt-8 inline-flex w-full items-center justify-center rounded-xl py-3 text-xs font-semibold transition ${index === 1 ? "bg-accent text-white dark:text-background hover:bg-accent-hover" : "border border-border bg-card hover:bg-card-secondary"}`}>
                     Get started
                   </Link>
                 </motion.div>
@@ -562,7 +562,7 @@ export default function LandingPage() {
                   type="button"
                   onClick={startDemoSimulation}
                   disabled={demoRunning || !demoIdea.trim()}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-xs font-bold text-white dark:text-[#0b1832] hover:bg-accent-hover transition-all duration-200 disabled:opacity-50 shadow-md"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-3 text-xs font-bold text-white dark:text-background hover:bg-accent-hover transition-all duration-200 disabled:opacity-50 shadow-md"
                 >
                   {demoRunning ? (
                     <>

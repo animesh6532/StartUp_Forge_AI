@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 
     # API Configuration
     BACKEND_HOST: str = "0.0.0.0"
-    BACKEND_PORT: int = 8000
+    BACKEND_PORT: int = 8001
     DEBUG: bool = False
     SECRET_KEY: str = "your-secret-key-change-in-production"
 
@@ -35,7 +35,9 @@ class Settings(BaseSettings):
     # CORS
     ALLOWED_ORIGINS: List[str] = [
         "http://localhost:3000",
-        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8001",
+        "http://127.0.0.1:8001",
     ]
 
     # JWT
@@ -44,7 +46,7 @@ class Settings(BaseSettings):
 
     # Extra Configuration Variables
     FRONTEND_URL: str = "http://localhost:3000"
-    VITE_API_URL: str = "http://localhost:8000"
+    VITE_API_URL: str = "http://127.0.0.1:8001"
     LOG_LEVEL: str = "INFO"
 
     model_config = {

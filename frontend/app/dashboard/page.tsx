@@ -10,15 +10,16 @@ import {
   Calendar,
   CheckCircle2,
   DollarSign,
-  Globe2,
   Loader2,
   Plus,
   Search,
   Trash2,
-  Users,
 } from "lucide-react";
-import Sidebar from "../../components/Sidebar";
 import { useAuth, useCurrency, type CurrencyCode, CURRENCY_RATES } from "../../components/providers";
+import Button from "../../components/ui/Button";
+import Badge, { toneForStatus } from "../../components/ui/Badge";
+import StatCard from "../../components/ui/StatCard";
+import EmptyState from "../../components/ui/EmptyState";
 
 type Startup = {
   id: string;
@@ -39,13 +40,6 @@ const emptyMetrics = {
   total_tokens: 0,
   failed_runs: 0,
 };
-
-function statusClass(status?: string) {
-  if (status === "completed") return "bg-success/10 text-success border border-success/15";
-  if (status === "processing") return "bg-accent/10 text-accent border border-accent/15 animate-pulse";
-  if (status === "failed") return "bg-red-500/10 text-red-500 border border-red-500/15";
-  return "bg-card-secondary text-textSecondary border border-border";
-}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -166,65 +160,68 @@ export default function DashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-background text-foreground transition-colors duration-300">
-      <Sidebar />
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 p-6 lg:p-10">
         {notification && (
-          <div className={`rounded-xl border p-4 text-xs font-semibold tracking-wide transition-all ${
+          <div className={`rounded-xl border p-4 text-xs font-semibold tracking-wide transition-all animate-fade-in ${
             notification.type === "success" 
               ? "border-success/20 bg-success/5 text-success" 
-              : "border-red-500/20 bg-red-500/5 text-red-500"
+              : "border-error/20 bg-error/5 text-error"
           }`}>
             {notification.message}
           </div>
         )}
         <div className="flex flex-col justify-between gap-4 border-b border-border pb-6 md:flex-row md:items-end">
           <div>
-            <div className="metric-label text-accent font-semibold tracking-wider">Dashboard</div>
-            <h1 className="mt-2 text-2xl font-bold tracking-tight text-foreground">Venture portfolio</h1>
-            <p className="mt-1 text-sm text-textSecondary">Track startup workspaces, agent execution metrics, and investor-readiness signals.</p>
+            <div className="metric-label text-accent">Dashboard</div>
+            <h1 className="mt-2 text-section text-foreground">Venture portfolio</h1>
+            <p className="mt-1 text-subtitle text-textSecondary">Track startup workspaces, agent execution metrics, and investor-readiness signals.</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowModal(true)}
-            className="inline-flex w-fit items-center gap-2 rounded-xl bg-accent px-5 py-3 text-xs font-bold text-white dark:text-[#0b1832] hover:bg-accent-hover transition duration-300 shadow-sm shadow-accent/5"
-          >
-            <Plus className="h-4 w-4" strokeWidth={2.5} /> New startup
-          </button>
+          <Button onClick={() => setShowModal(true)} icon={<Plus className="h-4 w-4" strokeWidth={2.5} />}>
+            New startup
+          </Button>
         </div>
 
+        {/* 1 — Most important metrics first */}
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {[
-            ["Total Startups", startups.length, Building2, "Active ideas in the studio"],
-            ["Agent Runs", metrics.total_runs || 0, BarChart3, `${metrics.failed_runs || 0} failed runs`],
-            ["Success Rate", `${metrics.success_rate || 0}%`, CheckCircle2, "Workflow completion quality"],
-            ["Token Usage", (metrics.total_tokens || 0).toLocaleString(), DollarSign, `Avg ${metrics.avg_execution_time || 0}s execution`],
-          ].map(([label, value, Icon, helper]: any) => (
-            <div key={label} className="premium-card p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="metric-label">{label}</div>
-                  <div className="mt-3 text-2xl font-bold text-foreground tracking-tight">{value}</div>
-                </div>
-                <div className="p-2 rounded-lg bg-card-secondary/50 border border-border/40">
-                  <Icon className="h-4.5 w-4.5 text-accent" strokeWidth={1.75} />
-                </div>
-              </div>
-              <p className="mt-4 border-t border-border pt-3 text-[11px] text-textSecondary font-medium">{helper}</p>
-            </div>
-          ))}
+          <StatCard
+            label="Total Startups"
+            value={startups.length}
+            helper="Active ideas in the studio"
+            icon={Building2}
+            emphasis
+          />
+          <StatCard
+            label="Agent Runs"
+            value={metrics.total_runs || 0}
+            helper={`${metrics.failed_runs || 0} failed runs`}
+            icon={BarChart3}
+          />
+          <StatCard
+            label="Success Rate"
+            value={`${metrics.success_rate || 0}%`}
+            helper="Workflow completion quality"
+            icon={CheckCircle2}
+          />
+          <StatCard
+            label="Token Usage"
+            value={(metrics.total_tokens || 0).toLocaleString()}
+            helper={`Avg ${metrics.avg_execution_time || 0}s execution`}
+            icon={DollarSign}
+          />
         </section>
 
         <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
+          {/* 2 — Workspace */}
           <div className="space-y-4">
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-              <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">Startup workspaces</h2>
+              <h2 className="text-caption text-foreground">Startup workspaces</h2>
               <label className="relative block w-full sm:w-72">
-                <Search className="absolute left-3.5 top-3 h-4 w-4 text-textSecondary" strokeWidth={1.75} />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-textSecondary" strokeWidth={1.75} />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search startups"
-                  className="w-full pl-9"
+                  className="glass-search w-full pl-9"
                 />
               </label>
             </div>
@@ -234,14 +231,13 @@ export default function DashboardPage() {
                 <Loader2 className="h-6 w-6 animate-spin text-accent" />
               </div>
             ) : filteredStartups.length === 0 ? (
-              <div className="premium-card flex min-h-72 flex-col items-center justify-center p-10 text-center">
-                <Building2 className="h-10 w-10 text-textSecondary opacity-60 mb-2" strokeWidth={1.5} />
-                <h3 className="text-sm font-bold text-foreground">No startup workspaces yet</h3>
-                <p className="mt-2 max-w-sm text-xs leading-5 text-textSecondary">Create a startup workspace to coordinate validation, market research, financials, and pitch decks.</p>
-                <button type="button" onClick={() => setShowModal(true)} className="mt-5 rounded-xl bg-accent px-5 py-3 text-xs font-bold text-white dark:text-[#0b1832] hover:bg-accent-hover transition duration-300">
-                  Create first workspace
-                </button>
-              </div>
+              <EmptyState
+                icon={Building2}
+                title="No startup workspaces yet"
+                description="Create a startup workspace to coordinate validation, market research, financials, and pitch decks."
+                actionLabel="Create first workspace"
+                onAction={() => setShowModal(true)}
+              />
             ) : (
               <div className="grid gap-4 md:grid-cols-2">
                 {filteredStartups.map((startup) => (
@@ -257,7 +253,9 @@ export default function DashboardPage() {
                           <h3 className="truncate text-xs font-bold text-foreground">{startup.name}</h3>
                           <p className="mt-1 text-[9px] font-bold uppercase tracking-wider text-accent">{startup.industry || "Uncategorized"}</p>
                         </div>
-                        <span className={`rounded-full px-2.5 py-0.5 text-[9px] font-bold capitalize tracking-wider ${statusClass(startup.status)}`}>{startup.status || "draft"}</span>
+                        <Badge tone={toneForStatus(startup.status)} pulse={startup.status === "processing"}>
+                          {startup.status || "draft"}
+                        </Badge>
                       </div>
                       <p className="mt-2 line-clamp-3 min-h-[3.75rem] text-xs leading-relaxed text-textSecondary font-medium">{startup.description || "No description provided."}</p>
                     </div>
@@ -277,7 +275,7 @@ export default function DashboardPage() {
                             role="button"
                             tabIndex={0}
                             onClick={(event) => handleDelete(startup.id, event as unknown as React.MouseEvent)}
-                            className="rounded-lg p-1.5 text-textSecondary hover:bg-red-500/5 hover:text-red-500 transition-colors"
+                            className="rounded-lg p-1.5 text-textSecondary hover:bg-error/5 hover:text-error transition-colors"
                             aria-label={`Delete ${startup.name}`}
                           >
                             <Trash2 className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -291,8 +289,9 @@ export default function DashboardPage() {
             )}
           </div>
 
+          {/* 3 — Recent execution / 4 — AI agent activity */}
           <aside className="space-y-4">
-            <h2 className="text-sm font-bold text-foreground uppercase tracking-wider">Execution activity</h2>
+            <h2 className="text-caption text-foreground">Agent execution activity</h2>
             <div className="premium-card max-h-[640px] overflow-y-auto p-5">
               {executions.length === 0 ? (
                 <p className="py-12 text-center text-xs text-textSecondary">No agent executions recorded yet.</p>
@@ -301,11 +300,13 @@ export default function DashboardPage() {
                   {executions.slice(0, 12).map((execution) => (
                     <div key={execution.id} className="border-b border-border pb-4 last:border-0 last:pb-0">
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs font-bold text-foreground">{execution.agent_role || "Agent"} Agent</p>
-                        <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold capitalize tracking-wider ${statusClass(execution.status)}`}>{execution.status || "queued"}</span>
+                        <p className="text-xs font-semibold text-foreground">{execution.agent_role || "Agent"} Agent</p>
+                        <Badge tone={toneForStatus(execution.status)} pulse={execution.status === "processing"}>
+                          {execution.status || "queued"}
+                        </Badge>
                       </div>
-                      <p className="mt-2 line-clamp-2 text-[10px] leading-relaxed text-textSecondary font-medium">{execution.logs || execution.startup_name || "Execution payload recorded."}</p>
-                      <div className="mt-2.5 flex justify-between text-[9px] text-textSecondary font-mono font-bold">
+                      <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-textSecondary">{execution.logs || execution.startup_name || "Execution payload recorded."}</p>
+                      <div className="mt-2.5 flex justify-between text-numbers text-[10px] text-textMuted font-medium">
                         <span>{execution.execution_time ? `${Number(execution.execution_time).toFixed(1)}s` : "Pending"}</span>
                         <span>{execution.token_consumption ? `${execution.token_consumption} tokens` : "No token data"}</span>
                       </div>
@@ -319,24 +320,24 @@ export default function DashboardPage() {
       </main>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0B1832]/40 px-4 backdrop-blur-sm transition-opacity" role="dialog" aria-modal="true">
-          <div className="premium-card w-full max-w-2xl p-7 relative bg-card shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031716]/40 px-4 backdrop-blur-sm transition-opacity" role="dialog" aria-modal="true">
+          <div className="premium-card w-full max-w-2xl p-7 relative bg-card !shadow-popover">
             <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
               <div>
-                <h2 className="text-md font-bold text-foreground tracking-tight">Create startup workspace</h2>
+                <h2 className="text-title text-foreground">Create startup workspace</h2>
                 <p className="mt-1 text-xs text-textSecondary font-medium">These inputs seed validation, research, financials, and pitch generation.</p>
               </div>
               <button 
                 type="button" 
                 onClick={() => setShowModal(false)} 
-                className="w-7 h-7 rounded-xl bg-card-secondary hover:bg-border flex items-center justify-center font-bold text-xs text-foreground transition"
+                className="w-7 h-7 rounded-lg bg-card-secondary hover:bg-border flex items-center justify-center font-bold text-xs text-foreground transition-colors"
                 aria-label="Close modal"
               >
                 ×
               </button>
             </div>
 
-            {error && <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-xs text-red-500 font-semibold">{error}</div>}
+            {error && <div className="mb-4 rounded-xl border border-error/20 bg-error/5 p-3 text-xs text-error font-semibold">{error}</div>}
 
             <form onSubmit={handleCreateStartup} className="grid gap-4 sm:grid-cols-2">
               {[
@@ -401,13 +402,12 @@ export default function DashboardPage() {
                 />
               </label>
               <div className="flex justify-end gap-3 border-t border-border pt-5 sm:col-span-2 mt-2">
-                <button type="button" onClick={() => setShowModal(false)} className="rounded-xl border border-border bg-card px-5 py-3 text-xs font-bold hover:bg-card-secondary transition">
+                <Button type="button" variant="secondary" onClick={() => setShowModal(false)}>
                   Cancel
-                </button>
-                <button type="submit" disabled={creating} className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-xs font-bold text-white dark:text-[#0b1832] hover:bg-accent-hover transition disabled:opacity-50">
-                  {creating && <Loader2 className="h-4 w-4 animate-spin" />}
-                  {creating ? "Launching Workflow..." : "Create and Run Pipeline"}
-                </button>
+                </Button>
+                <Button type="submit" loading={creating}>
+                  {creating ? "Launching workflow…" : "Create and run pipeline"}
+                </Button>
               </div>
             </form>
           </div>
