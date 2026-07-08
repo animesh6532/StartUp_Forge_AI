@@ -120,7 +120,7 @@ export default function AdminDashboardPage() {
             ) : (
               <div className="space-y-3">
                 {usersList.map((usr) => (
-                  <div key={usr.id} className="bg-card-secondary/20 border border-border p-4 rounded-xl flex items-center justify-between transition-colors">
+                  <div key={usr.id} className="bg-card-secondary/20 border border-border p-4 rounded-xl flex items-center justify-between hover-row cursor-default">
                     <div>
                       <h4 className="text-xs font-bold text-foreground">{usr.full_name}</h4>
                       <p className="text-[10px] text-textSecondary font-semibold mt-0.5">{usr.email}</p>
@@ -169,7 +169,7 @@ export default function AdminDashboardPage() {
             ) : (
               <div className="space-y-3">
                 {executions.map((exe) => (
-                  <div key={exe.id} className="bg-card-secondary/20 border border-border p-3.5 rounded-xl flex items-center justify-between transition-colors">
+                  <div key={exe.id} className="bg-card-secondary/20 border border-border p-3.5 rounded-xl flex items-center justify-between hover-row cursor-default">
                     <div className="overflow-hidden">
                       <h4 className="text-xs font-bold text-foreground truncate max-w-full">{exe.startup_name}</h4>
                       <p className="text-[9px] text-textSecondary font-semibold mt-0.5">{exe.agent_role} Node</p>

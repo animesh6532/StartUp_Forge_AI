@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import {
   ArrowUpRight,
@@ -64,6 +65,42 @@ export default function DashboardPage() {
     targetAudience: "",
   });
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const modalOverlayRef = useRef<HTMLDivElement>(null);
+  const [shakeModal, setShakeModal] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, boolean>>({});
+
+  // Keyboard shortcut Ctrl + K
+  useEffect(() => {
+    const handleKbd = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKbd);
+    return () => window.removeEventListener("keydown", handleKbd);
+  }, []);
+
+  // Escape key closes modal
+  useEffect(() => {
+    const handleESC = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowModal(false);
+      }
+    };
+    if (showModal) {
+      window.addEventListener("keydown", handleESC);
+    }
+    return () => window.removeEventListener("keydown", handleESC);
+  }, [showModal]);
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === modalOverlayRef.current) {
+      setShowModal(false);
+    }
+  };
+
   useEffect(() => {
     if (!loading && !token) router.push("/login");
   }, [loading, token, router]);
@@ -103,6 +140,7 @@ export default function DashboardPage() {
     try {
       const numericBudget = parseFloat(form.budget.replace(/,/g, ""));
       if (isNaN(numericBudget)) {
+        setFormErrors({ budget: true });
         throw new Error("Please enter a valid numeric budget.");
       }
       
@@ -126,8 +164,11 @@ export default function DashboardPage() {
 
       setShowModal(false);
       setForm({ name: "", description: "", industry: "", budget: "", country: "", targetAudience: "" });
+      setFormErrors({});
       router.push(`/project/${startupRes.data.id}`);
     } catch (err: any) {
+      setShakeModal(true);
+      setTimeout(() => setShakeModal(false), 500);
       setError(err.response?.data?.detail || err.message || "Could not create the startup workspace.");
     } finally {
       setCreating(false);
@@ -218,11 +259,13 @@ export default function DashboardPage() {
               <label className="relative block w-full sm:w-72">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-textSecondary" strokeWidth={1.75} />
                 <input
+                  ref={searchInputRef}
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search startups"
-                  className="glass-search w-full pl-9"
+                  className="glass-search w-full pl-9 pr-14"
                 />
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[9px] font-bold text-textMuted bg-card-secondary/60 px-1.5 py-0.5 rounded border border-border pointer-events-none select-none">Ctrl K</span>
               </label>
             </div>
 
@@ -319,100 +362,119 @@ export default function DashboardPage() {
         </section>
       </main>
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#031716]/40 px-4 backdrop-blur-sm transition-opacity" role="dialog" aria-modal="true">
-          <div className="premium-card w-full max-w-2xl p-7 relative bg-card !shadow-popover">
-            <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
-              <div>
-                <h2 className="text-title text-foreground">Create startup workspace</h2>
-                <p className="mt-1 text-xs text-textSecondary font-medium">These inputs seed validation, research, financials, and pitch generation.</p>
+      <AnimatePresence>
+        {showModal && (
+          <div
+            ref={modalOverlayRef}
+            onClick={handleOverlayClick}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#031716]/50 px-4 backdrop-blur-md"
+            role="dialog"
+            aria-modal="true"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              transition={{ duration: 0.18, ease: [0.22, 0.61, 0.36, 1] }}
+              className={`premium-card w-full max-w-2xl p-7 relative bg-card !shadow-popover ${
+                shakeModal ? "shake-error" : ""
+              }`}
+            >
+              <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-4">
+                <div>
+                  <h2 className="text-title text-foreground">Create startup workspace</h2>
+                  <p className="mt-1 text-xs text-textSecondary font-medium">These inputs seed validation, research, financials, and pitch generation.</p>
+                </div>
+                <button 
+                  type="button" 
+                  onClick={() => setShowModal(false)} 
+                  className="w-7 h-7 rounded-lg bg-card-secondary hover:bg-border flex items-center justify-center font-bold text-xs text-foreground transition-colors"
+                  aria-label="Close modal"
+                >
+                  ×
+                </button>
               </div>
-              <button 
-                type="button" 
-                onClick={() => setShowModal(false)} 
-                className="w-7 h-7 rounded-lg bg-card-secondary hover:bg-border flex items-center justify-center font-bold text-xs text-foreground transition-colors"
-                aria-label="Close modal"
-              >
-                ×
-              </button>
-            </div>
 
-            {error && <div className="mb-4 rounded-xl border border-error/20 bg-error/5 p-3 text-xs text-error font-semibold">{error}</div>}
+              {error && <div className="mb-4 rounded-xl border border-error/20 bg-error/5 p-3 text-xs text-error font-semibold">{error}</div>}
 
-            <form onSubmit={handleCreateStartup} className="grid gap-4 sm:grid-cols-2">
-              {[
-                ["name", "Startup Name", "HealthFlow AI"],
-                ["industry", "Industry Domain", "Digital Health"],
-                ["budget", "Capital Budget Plan", "25000"],
-                ["country", "Target Country", "United States"],
-                ["targetAudience", "Primary Customer Persona", "Independent clinics"],
-              ].map(([key, label, placeholder]) => {
-                if (key === "budget") {
-                  return (
-                    <div key={key} className="block">
-                      <span className="metric-label mb-1.5 block">{label}</span>
-                      <div className="flex gap-2">
-                        <select
-                          value={formCurrency}
-                          onChange={(e) => setFormCurrency(e.target.value as CurrencyCode)}
-                          className="rounded-xl border border-border bg-card-secondary px-2.5 py-2 text-sm outline-none focus:border-accent"
-                        >
-                          <option value="USD">🇺🇸 USD ($)</option>
-                          <option value="INR">🇮🇳 INR (₹)</option>
-                          <option value="EUR">🇪🇺 EUR (€)</option>
-                          <option value="GBP">🇬🇧 GBP (£)</option>
-                          <option value="AED">🇦🇪 AED (د.إ)</option>
-                          <option value="SGD">🇸🇬 SGD (S$)</option>
-                        </select>
-                        <input
-                          required
-                          type="number"
-                          min="1"
-                          value={(form as any)[key]}
-                          onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-                          placeholder={placeholder}
-                          className="w-full flex-1"
-                        />
+              <form onSubmit={handleCreateStartup} className="grid gap-4 sm:grid-cols-2">
+                {[
+                  ["name", "Startup Name", "HealthFlow AI"],
+                  ["industry", "Industry Domain", "Digital Health"],
+                  ["budget", "Capital Budget Plan", "25000"],
+                  ["country", "Target Country", "United States"],
+                  ["targetAudience", "Primary Customer Persona", "Independent clinics"],
+                ].map(([key, label, placeholder]) => {
+                  if (key === "budget") {
+                    return (
+                      <div key={key} className="block">
+                        <span className="metric-label mb-1.5 block">{label}</span>
+                        <div className="flex gap-2">
+                          <select
+                            value={formCurrency}
+                            onChange={(e) => setFormCurrency(e.target.value as CurrencyCode)}
+                            className="rounded-xl border border-border bg-card-secondary px-2.5 py-2 text-sm outline-none focus:border-accent"
+                          >
+                            <option value="USD">🇺🇸 USD ($)</option>
+                            <option value="INR">🇮🇳 INR (₹)</option>
+                            <option value="EUR">🇪🇺 EUR (€)</option>
+                            <option value="GBP">🇬🇧 GBP (£)</option>
+                            <option value="AED">🇦🇪 AED (د.إ)</option>
+                            <option value="SGD">🇸🇬 SGD (S$)</option>
+                          </select>
+                          <input
+                            required
+                            type="number"
+                            min="1"
+                            value={(form as any)[key]}
+                            onChange={(event) => {
+                              setFormErrors((prev) => ({ ...prev, budget: false }));
+                              setForm((current) => ({ ...current, [key]: event.target.value }));
+                            }}
+                            placeholder={placeholder}
+                            className={`w-full flex-1 ${formErrors.budget ? "border-error/50 shake-error" : ""}`}
+                          />
+                        </div>
                       </div>
-                    </div>
+                    );
+                  }
+                  return (
+                    <label key={key} className="block">
+                      <span className="metric-label mb-1.5 block">{label}</span>
+                      <input
+                        required
+                        value={(form as any)[key]}
+                        onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
+                        placeholder={placeholder}
+                        className="w-full"
+                      />
+                    </label>
                   );
-                }
-                return (
-                  <label key={key} className="block">
-                    <span className="metric-label mb-1.5 block">{label}</span>
-                    <input
-                      required
-                      value={(form as any)[key]}
-                      onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
-                      placeholder={placeholder}
-                      className="w-full"
-                    />
-                  </label>
-                );
-              })}
-              <label className="block sm:col-span-2">
-                <span className="metric-label mb-1.5 block">Core Value Narrative</span>
-                <textarea
-                  required
-                  rows={4}
-                  value={form.description}
-                  onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
-                  placeholder="Describe the problem, buyer pain point, product service, and expected revenue loops."
-                  className="w-full resize-none"
-                />
-              </label>
-              <div className="flex justify-end gap-3 border-t border-border pt-5 sm:col-span-2 mt-2">
-                <Button type="button" variant="secondary" onClick={() => setShowModal(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" loading={creating}>
-                  {creating ? "Launching workflow…" : "Create and run pipeline"}
-                </Button>
-              </div>
-            </form>
+                })}
+                <label className="block sm:col-span-2">
+                  <span className="metric-label mb-1.5 block">Core Value Narrative</span>
+                  <textarea
+                    required
+                    rows={4}
+                    value={form.description}
+                    onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
+                    placeholder="Describe the problem, buyer pain point, product service, and expected revenue loops."
+                    className="w-full resize-none"
+                  />
+                </label>
+                <div className="flex justify-end gap-3 border-t border-border pt-5 sm:col-span-2 mt-2">
+                  <Button type="button" variant="secondary" onClick={() => setShowModal(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit" loading={creating}>
+                    {creating ? "Launching workflow…" : "Create and run pipeline"}
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 }

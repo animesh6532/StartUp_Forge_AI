@@ -14,9 +14,9 @@ export default function Tooltip({ content, isVisible }: TooltipProps) {
       {isVisible && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95, x: "-50%" }}
-          animate={{ opacity: 1, scale: 1.05, x: "-50%" }}
+          animate={{ opacity: 1, scale: 1, x: "-50%" }}
           exit={{ opacity: 0, scale: 0.95, x: "-50%" }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.15, ease: [0.22, 0.61, 0.36, 1] }}
           style={{ pointerEvents: "none" }}
           className="absolute bottom-full mb-2.5 left-1/2 z-50 whitespace-nowrap rounded-md bg-black px-2.5 py-1 text-[10px] font-semibold text-white shadow-lg border border-white/10"
         >

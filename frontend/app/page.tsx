@@ -85,6 +85,94 @@ const staggerItem = {
   },
 } as const;
 
+const cubicEasing = [0.16, 1, 0.3, 1] as const;
+
+const heroBadgeReveal = {
+  initial: { opacity: 0, y: 10 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: cubicEasing }
+  }
+} as const;
+
+const heroTitleReveal = {
+  initial: { opacity: 0, y: 24, filter: "blur(8px)" },
+  animate: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: cubicEasing }
+  }
+} as const;
+
+const heroParagraphReveal = {
+  initial: { opacity: 0, y: 16 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, delay: 0.12, ease: cubicEasing }
+  }
+} as const;
+
+const heroButtonsReveal = {
+  initial: { opacity: 0, y: 16, scale: 0.96 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.7, delay: 0.20, ease: cubicEasing }
+  }
+} as const;
+
+const heroStatsContainer = {
+  initial: {},
+  animate: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.28
+    }
+  }
+} as const;
+
+const heroStatsItem = {
+  initial: { opacity: 0, y: 12 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: cubicEasing }
+  }
+} as const;
+
+const heroDashboardReveal = {
+  initial: { opacity: 0, x: 40, scale: 0.95 },
+  animate: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    transition: { duration: 0.8, delay: 0.30, ease: cubicEasing }
+  }
+} as const;
+
+const heroInfoContainer = {
+  initial: {},
+  animate: {
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.40
+    }
+  }
+} as const;
+
+const heroInfoItem = {
+  initial: { opacity: 0, y: 12 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: cubicEasing }
+  }
+} as const;
+
 const workflow = [
   ["Capture", "Structure the idea, founder constraints, market, budget, and audience."],
   ["Validate", "Score feasibility, pressure-test assumptions, and surface pivot paths."],
@@ -114,10 +202,6 @@ export default function LandingPage() {
   const { scrollYProgress } = useScroll();
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const { currency, setCurrency, formatVal } = useCurrency();
-
-  // Parallax background offset
-  const { scrollY } = useScroll();
-  const backgroundY = useTransform(scrollY, [0, 800], [0, 140]);
 
   // Demo state
   const [demoIdea, setDemoIdea] = React.useState("Airbnb for pets");
@@ -151,12 +235,12 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen bg-transparent text-foreground transition-colors duration-300">
       {/* Scroll progress bar */}
       <motion.div className="fixed left-0 top-0 z-[60] h-0.5 bg-accent" style={{ width: progressWidth }} />
 
       {/* Header bar (Navbar branding text removed) */}
-      <header className="sticky top-0 z-50 border-b border-border bg-card/85 backdrop-blur-md transition-all">
+      <header className="sticky top-0 z-50 border-b border-border bg-transparent backdrop-blur-md transition-all">
         <div className="section-shell flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center" aria-label="StartupForge AI home">
             
@@ -195,65 +279,85 @@ export default function LandingPage() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden border-b border-border py-16 lg:py-24 bg-gradient-to-b from-card-secondary/20 to-transparent">
-          {/* Subtle Parallax background image */}
-          <motion.div 
-            style={{ y: backgroundY }}
-            className="absolute inset-0 z-0 opacity-15 dark:opacity-22 pointer-events-none"
-          >
-            <img src="/hero-bg.png" alt="Strategic background grid" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
-          </motion.div>
-          <div className="absolute inset-0 z-10 pointer-events-none bg-[linear-gradient(180deg,transparent,rgba(3,23,22,0.08))]" />
-          
+        <section className="relative border-b border-border py-16 lg:py-24 bg-transparent">
           <div className="relative z-20 section-shell grid min-h-[calc(100vh-8rem)] items-center gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr]">
-            <motion.div {...sectionReveal} className="max-w-2xl text-left">
+            <div className="max-w-2xl text-left">
               {/* Branding moved from Navbar to Hero Section badge */}
-              <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-border bg-card px-4 py-2 text-xs font-bold text-foreground shadow-sm">
+              <motion.div 
+                variants={heroBadgeReveal}
+                initial="initial"
+                animate="animate"
+                className="mb-6 inline-flex items-center gap-3 rounded-full border border-border bg-card px-4 py-2 text-xs font-bold text-foreground shadow-sm"
+              >
                 <div className="flex h-5 w-5 items-center justify-center rounded-lg bg-accent text-[10px] font-bold text-white">S</div>
                 <div className="flex items-center gap-2">
                   <span className="font-bold">StartupForge AI</span>
                   <span className="text-[4px] text-textSecondary">•</span>
                   <span className="text-[9px] uppercase tracking-widest text-textSecondary font-bold">Autonomous Venture Studio</span>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Responsive Hero Title: Desktop 56-64px, Tablet 40-48px, Mobile 28-36px */}
-              <h1 className="text-[32px] sm:text-[44px] lg:text-[60px] font-bold tracking-tight text-foreground leading-[1.1] max-w-full">
+              <motion.h1 
+                variants={heroTitleReveal}
+                initial="initial"
+                animate="animate"
+                className="text-[32px] sm:text-[44px] lg:text-[60px] font-bold tracking-tight text-foreground leading-[1.1] max-w-full"
+              >
                 Build, validate, and scale investor-grade startups.
-              </h1>
+              </motion.h1>
               
-              <p className="mt-6 max-w-xl text-sm sm:text-base lg:text-lg leading-relaxed text-textSecondary font-medium">
+              <motion.p 
+                variants={heroParagraphReveal}
+                initial="initial"
+                animate="animate"
+                className="mt-6 max-w-xl text-sm sm:text-base lg:text-lg leading-relaxed text-textSecondary font-medium"
+              >
                 Coordinate strategy, market research, financial modeling, technical planning, and fundraising preparation in a single premium workspace designed for accelerators, operators, and venture teams.
-              </p>
+              </motion.p>
               
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <motion.div 
+                variants={heroButtonsReveal}
+                initial="initial"
+                animate="animate"
+                className="mt-10 flex flex-col gap-4 sm:flex-row"
+              >
                 <Link href="/register" className="btn-primary inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-semibold shadow-xl shadow-accent/15">
                   Launch a workspace <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link href="/dashboard" className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-8 py-4 text-sm font-semibold text-foreground transition duration-300 hover:bg-card-secondary/70">
                   View platform demo
                 </Link>
-              </div>
-              <div className="mt-12 grid max-w-xl grid-cols-3 gap-4 text-sm">
+              </motion.div>
+              
+              <motion.div 
+                variants={heroStatsContainer}
+                initial="initial"
+                animate="animate"
+                className="mt-12 grid max-w-xl grid-cols-3 gap-4 text-sm"
+              >
                 {[
                   ["20+", "Workflow steps"],
                   ["8", "Venture agents"],
                   ["<15 min", "Full compiler"],
                 ].map(([value, label]) => (
-                  <div key={label} className="premium-card p-5">
+                  <motion.div key={label} variants={heroStatsItem} className="premium-card p-5">
                     <div className="text-2xl font-bold text-foreground tracking-tight">{value}</div>
                     <div className="mt-1.5 text-[9px] uppercase tracking-[0.20em] font-bold text-textSecondary">{label}</div>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
 
             {/* Premium right side preview elements (replaces all 3D content) */}
-            <motion.div {...sectionReveal} transition={{ duration: 0.50, delay: 0.1, ease: "easeOut" }} className="space-y-6">
+            <div className="space-y-6">
               {/* Startup Dashboard Preview Card */}
-              <div className="premium-card overflow-hidden">
+              <motion.div 
+                variants={heroDashboardReveal}
+                initial="initial"
+                animate="animate"
+                className="premium-card overflow-hidden"
+              >
                 <div className="flex items-center justify-between border-b border-border/60 bg-card/65 px-5 py-4">
                   <div className="flex items-center gap-2.5">
                     <div className="h-6 w-6 rounded-lg bg-accent text-white flex items-center justify-center text-xs font-bold shadow-sm">Q</div>
@@ -330,26 +434,31 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Accompanying info highlights */}
-              <div className="grid gap-3 sm:grid-cols-2">
+              <motion.div 
+                variants={heroInfoContainer}
+                initial="initial"
+                animate="animate"
+                className="grid gap-3 sm:grid-cols-2"
+              >
                 {[
                   ["Structured Deliverables", "Generate professional Word documents and PowerPoint slides automatically."],
                   ["Venture Intelligence", "11 coordination agent nodes audit and analyze financial risks and market opportunity."],
                 ].map(([title, body]) => (
-                  <div key={title} className="premium-card p-4">
+                  <motion.div key={title} variants={heroInfoItem} className="premium-card p-4">
                     <p className="text-xs font-bold text-foreground">{title}</p>
                     <p className="mt-1 text-[11px] leading-relaxed text-textSecondary">{body}</p>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
         </section>
 
         {/* Problem Section */}
-        <section className="border-b border-border py-24 transition-colors">
+        <section className="border-b border-border py-24 bg-transparent transition-colors">
           <motion.div {...sectionReveal} className="section-shell grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
             <div>
               <div className="metric-label">The Challenge</div>
@@ -385,7 +494,7 @@ export default function LandingPage() {
         </section>
 
         {/* Workflow Section (Staggered reveal) */}
-        <section id="workflow" className="border-b border-border bg-card-secondary/20 py-24">
+        <section id="workflow" className="border-b border-border bg-transparent py-24">
           <motion.div {...sectionReveal} className="section-shell">
             <div className="max-w-2xl">
               <div className="metric-label">Venture Lifecycle</div>
@@ -413,7 +522,7 @@ export default function LandingPage() {
         </section>
 
         {/* Agents Ecosystem (Staggered reveal) */}
-        <section id="agents" className="border-b border-border py-24">
+        <section id="agents" className="border-b border-border bg-transparent py-24">
           <motion.div {...sectionReveal} className="section-shell grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
               <div className="metric-label">Agent Network</div>
@@ -446,7 +555,7 @@ export default function LandingPage() {
         </section>
 
         {/* Stages Timeline */}
-        <section className="border-b border-border bg-card-secondary/20 py-24">
+        <section className="border-b border-border bg-transparent py-24">
           <motion.div {...sectionReveal} className="section-shell">
             <div className="max-w-2xl">
               <div className="metric-label">Maturity Timeline</div>
@@ -466,7 +575,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Grids (Staggered reveal) */}
-        <section id="features" className="border-b border-border py-24">
+        <section id="features" className="border-b border-border bg-transparent py-24">
           <motion.div {...sectionReveal} className="section-shell">
             <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
               <div className="max-w-2xl">
@@ -499,7 +608,7 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Matrix (Staggered reveal) */}
-        <section id="pricing" className="border-b border-border py-24">
+        <section id="pricing" className="border-b border-border bg-transparent py-24">
           <motion.div {...sectionReveal} className="section-shell">
             <div className="max-w-2xl">
               <div className="metric-label">Investment plans</div>
@@ -540,7 +649,7 @@ export default function LandingPage() {
         </section>
 
         {/* Interactive Demo Console */}
-        <section id="demo" className="border-b border-border py-24 bg-card-secondary/10">
+        <section id="demo" className="border-b border-border bg-transparent py-24">
           <motion.div {...sectionReveal} className="section-shell max-w-4xl">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <div className="metric-label">Sandbox Terminal</div>
@@ -637,7 +746,7 @@ export default function LandingPage() {
         </section>
 
         {/* Action Callout */}
-        <section className="py-24 transition-colors">
+        <section className="py-24 bg-transparent transition-colors">
           <motion.div {...sectionReveal} className="section-shell">
             <div className="premium-card p-8 md:p-12 bg-gradient-to-r from-card to-card-secondary/20">
               <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-center">
@@ -659,7 +768,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t border-border py-8 bg-card/40">
+      <footer className="border-t border-border py-8 bg-transparent">
         <div className="section-shell flex flex-col justify-between gap-3 text-xs text-textSecondary sm:flex-row">
           <p>(c) 2026 StartupForge AI</p>
           <p>Autonomous venture operating system.</p>
